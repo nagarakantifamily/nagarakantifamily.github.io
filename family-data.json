@@ -1,0 +1,236 @@
+{
+  "familyName": "Nagarakanti",
+  "familyTree": {
+    "id": "patriarch-1",
+    "name": "N P Rangiah Shetty",
+    "role": "Patriarch",
+    "gender": "male",
+    "spouse": {
+      "id": "matriarch-1",
+      "name": "N Varalakshamma",
+      "role": "Matriarch",
+      "gender": "female"
+    },
+    "description": "Patriarch of the Nagarakanti family",
+    "children": [
+      {
+        "id": "son-1",
+        "name": "N Ranganath Gupta",
+        "role": "1st Son",
+        "gender": "male",
+        "spouse": {
+          "id": "wife-1",
+          "name": "N Sathyavathi",
+          "role": "Wife",
+          "gender": "female"
+        },
+        "description": "First son of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "granddaughter-1",
+            "name": "Kiranmai Ragalatha",
+            "role": "1st Daughter",
+            "gender": "female",
+            "description": "First daughter of N Ranganath Gupta and N Sathyavathi"
+          },
+          {
+            "id": "grandson-1",
+            "name": "Rajeev Chandra",
+            "role": "1st Son",
+            "gender": "male",
+            "description": "First son of N Ranganath Gupta and N Sathyavathi"
+          }
+        ]
+      },
+      {
+        "id": "son-2",
+        "name": "N Rama Krishna",
+        "role": "2nd Son",
+        "gender": "male",
+        "spouse": {
+          "id": "wife-2",
+          "name": "Kalpana",
+          "role": "Wife",
+          "gender": "female"
+        },
+        "description": "Second son of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "granddaughter-2",
+            "name": "Nilima Dhavala",
+            "role": "1st Daughter",
+            "gender": "female",
+            "description": "First daughter of N Rama Krishna and Kalpana"
+          },
+          {
+            "id": "granddaughter-3",
+            "name": "Rakhi",
+            "role": "2nd Daughter",
+            "gender": "female",
+            "description": "Second daughter of N Rama Krishna and Kalpana"
+          }
+        ]
+      },
+      {
+        "id": "son-3",
+        "name": "N Ravindranath",
+        "role": "3rd Son",
+        "gender": "male",
+        "spouse": {
+          "id": "wife-3",
+          "name": "N Vani Ravindra",
+          "role": "Wife",
+          "gender": "female"
+        },
+        "description": "Third son of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "granddaughter-4",
+            "name": "Mylavaram Srujana",
+            "role": "1st Daughter",
+            "gender": "female",
+            "description": "First daughter of N Ravindranath and N Vani Ravindra"
+          },
+          {
+            "id": "granddaughter-5",
+            "name": "Sumitha",
+            "role": "2nd Daughter",
+            "gender": "female",
+            "description": "Second daughter of N Ravindranath and N Vani Ravindra"
+          }
+        ]
+      },
+      {
+        "id": "daughter-1",
+        "name": "Rajeshwari",
+        "role": "1st Daughter",
+        "gender": "female",
+        "spouse": {
+          "id": "husband-1",
+          "name": "G Ramachandra",
+          "role": "Husband",
+          "gender": "male"
+        },
+        "description": "First daughter of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "grandson-2",
+            "name": "G Harsha",
+            "role": "1st Son",
+            "gender": "male",
+            "description": "Son of Rajeshwari and G Ramachandra"
+          },
+          {
+            "id": "granddaughter-6",
+            "name": "G Kavya",
+            "role": "1st Daughter",
+            "gender": "female",
+            "description": "Daughter of Rajeshwari and G Ramachandra"
+          }
+        ]
+      },
+      {
+        "id": "daughter-2",
+        "name": "Radha",
+        "role": "2nd Daughter",
+        "gender": "female",
+        "spouse": {
+          "id": "husband-2",
+          "name": "Harapanahalli Krishna Murthy",
+          "role": "Husband",
+          "gender": "male"
+        },
+        "description": "Second daughter of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "granddaughter-7",
+            "name": "Aishwaraya Harapanahalli",
+            "role": "1st Daughter",
+            "gender": "female",
+            "description": "Daughter of Radha and Harapanahalli Krishna Murthy"
+          },
+          {
+            "id": "granddaughter-8",
+            "name": "Supraja Harapanahalli",
+            "role": "2nd Daughter",
+            "gender": "female",
+            "description": "Daughter of Radha and Harapanahalli Krishna Murthy"
+          }
+        ]
+      },
+      {
+        "id": "son-4",
+        "name": "N Raghuram",
+        "role": "4th Son",
+        "gender": "male",
+        "spouse": {
+          "id": "wife-4",
+          "name": "N Usha Raghuram",
+          "role": "Wife",
+          "gender": "female"
+        },
+        "description": "Fourth son of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "grandson-3",
+            "name": "N Sai Prem",
+            "role": "1st Son",
+            "gender": "male",
+            "spouse": {
+              "id": "wife-5",
+              "name": "A Sai Harshitha",
+              "role": "Wife",
+              "gender": "female"
+            },
+            "description": "Son of N Raghuram and N Usha Raghuram",
+            "children": [
+              {
+                "id": "great-grandson-1",
+                "name": "Aditya Ram",
+                "role": "1st Son",
+                "gender": "male",
+                "description": "Son of N Sai Prem and A Sai Harshitha"
+              }
+            ]
+          },
+          {
+            "id": "grandson-4",
+            "name": "N Vivek",
+            "role": "2nd Son",
+            "gender": "male",
+            "description": "Second son of N Raghuram and N Usha Raghuram"
+          }
+        ]
+      },
+      {
+        "id": "son-5",
+        "name": "N Raja Shekar",
+        "role": "5th Son",
+        "gender": "male",
+        "spouse": {
+          "id": "wife-6",
+          "name": "N Sreedevi",
+          "role": "Wife",
+          "gender": "female"
+        },
+        "description": "Fifth son of N P Rangiah Shetty and N Varalakshamma",
+        "children": [
+          {
+            "id": "granddaughter-9",
+            "name": "N Harika",
+            "role": "1st Daughter",
+            "gender": "female",
+            "description": "Daughter of N Raja Shekar and N Sreedevi"
+          },
+          {
+            "id": "grandson-5",
+            "name": "N Rahul Shekar",
+            "role": "1st Son",
+            "gender": "male",
+            "description": "Son of N Raja Shekar and N Sreedevi"
+          }
+        ]
+      }
+    ]
+  }
+}
