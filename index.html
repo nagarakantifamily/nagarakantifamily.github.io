@@ -9,16 +9,13 @@
   <style>
     :root {
       --bg: #030014;
-      --panel: rgba(15, 23, 42, 0.38);
+      --panel: rgba(15, 23, 42, 0.42);
       --panel-border: rgba(148, 163, 184, 0.18);
-      --line: rgba(148, 163, 184, 0.7);
-      --line-soft: rgba(148, 163, 184, 0.5);
+      --line: rgba(148, 163, 184, 0.72);
       --text: #f8fafc;
       --muted: #94a3b8;
       --cyan: #67e8f9;
       --cyan-strong: #22d3ee;
-      --magenta: rgba(168, 85, 247, 0.25);
-      --blue: rgba(59, 130, 246, 0.18);
     }
 
     * { box-sizing: border-box; }
@@ -40,35 +37,33 @@
     body {
       position: relative;
       background:
-        radial-gradient(circle at 10% 10%, rgba(59,130,246,0.18), transparent 30%),
-        radial-gradient(circle at 85% 85%, rgba(168,85,247,0.18), transparent 35%),
+        radial-gradient(circle at 12% 10%, rgba(59,130,246,0.16), transparent 28%),
+        radial-gradient(circle at 86% 84%, rgba(168,85,247,0.16), transparent 32%),
         var(--bg);
     }
 
-    .ambient-glow-one,
-    .ambient-glow-two {
+    .ambient-glow-1,
+    .ambient-glow-2 {
       position: fixed;
-      border-radius: 9999px;
+      width: 38vw;
+      height: 38vw;
+      border-radius: 50%;
       filter: blur(120px);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.9;
+      opacity: 0.8;
     }
 
-    .ambient-glow-one {
-      width: 40vw;
-      height: 40vw;
-      top: -10%;
+    .ambient-glow-1 {
+      top: -12%;
       left: -10%;
-      background: rgba(59, 130, 246, 0.18);
+      background: rgba(59,130,246,0.18);
     }
 
-    .ambient-glow-two {
-      width: 35vw;
-      height: 35vw;
-      bottom: -10%;
+    .ambient-glow-2 {
       right: -10%;
-      background: rgba(168, 85, 247, 0.18);
+      bottom: -12%;
+      background: rgba(168,85,247,0.18);
     }
 
     .page {
@@ -76,7 +71,7 @@
       z-index: 1;
       width: max-content;
       min-width: 100%;
-      padding: 56px 32px 80px;
+      padding: 52px 30px 90px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -84,28 +79,28 @@
 
     .header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 42px;
     }
 
     .eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.30em;
+      margin: 0 0 10px;
       color: var(--cyan);
+      font-size: 11px;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       font-weight: 700;
-      margin: 0 0 10px;
     }
 
     .title {
       margin: 0;
-      font-size: clamp(2rem, 3vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.04em;
+      font-size: clamp(2.6rem, 3.5vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
       color: #fff;
     }
 
     .subtitle {
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 12px;
       color: var(--muted);
       letter-spacing: 0.02em;
@@ -114,10 +109,10 @@
     .tree {
       position: relative;
       z-index: 2;
-      display: flex;
-      justify-content: center;
       width: max-content;
       min-width: 100%;
+      display: flex;
+      justify-content: center;
     }
 
     .tree ul,
@@ -128,10 +123,10 @@
     }
 
     .tree ul {
-      position: relative;
       display: flex;
       justify-content: center;
       align-items: flex-start;
+      position: relative;
       padding-top: 30px;
     }
 
@@ -142,7 +137,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 26px 14px 0;
+      padding: 26px 16px 0;
     }
 
     .tree li::before,
@@ -164,21 +159,16 @@
     .tree li:only-child::before,
     .tree li:only-child::after { display: none; }
 
-    .tree-node {
-      position: relative;
-      z-index: 1;
-    }
-
-    .family-node {
+    .family-unit {
       position: relative;
       z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 120px;
+      min-height: 110px;
     }
 
-    .family-node::before {
+    .family-unit::before {
       content: "";
       position: absolute;
       left: 50%;
@@ -190,57 +180,51 @@
       z-index: 0;
     }
 
-    .tree > ul > li > .family-node::before { display: none; }
-
-    .family-pair {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .tree > ul > li > .family-unit::before {
+      display: none;
     }
 
-    .member-card {
+    .person-card {
       position: relative;
       z-index: 2;
-      width: 182px;
-      min-width: 182px;
-      height: 90px;
-      padding: 12px 14px;
+      width: 180px;
+      min-width: 180px;
+      height: 88px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
+      padding: 10px 14px;
       border-radius: 18px;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
       cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
     }
 
-    .member-card:hover {
+    .person-card:hover {
       transform: translateY(-2px);
       background: rgba(255,255,255,0.06);
       border-color: rgba(103,232,249,0.35);
     }
 
-    .member-card .name {
+    .person-card .name {
       display: block;
+      width: 100%;
       font-size: 13px;
       line-height: 1.2;
       font-weight: 600;
       color: #fff;
-      width: 100%;
       word-break: break-word;
     }
 
-    .member-card .role {
+    .person-card .role {
       display: block;
-      margin-top: 9px;
+      margin-top: 8px;
       font-size: 9px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -252,7 +236,7 @@
       position: relative;
       z-index: 1;
       width: 84px;
-      height: 90px;
+      height: 92px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -266,8 +250,8 @@
       left: 50%;
       width: 100%;
       height: 2px;
-      transform: translate(-50%, -50%);
       background: var(--line);
+      transform: translate(-50%, -50%);
     }
 
     .couple-connector.has-children::after {
@@ -286,16 +270,15 @@
       z-index: 3;
       width: 26px;
       height: 26px;
-      border-radius: 9999px;
+      border-radius: 50%;
       border: 1px solid rgba(103,232,249,0.8);
       background: rgba(3,0,20,0.9);
       color: var(--cyan);
+      font-size: 18px;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1;
       cursor: pointer;
       transition: background 0.2s ease, transform 0.2s ease;
     }
@@ -305,14 +288,14 @@
       transform: scale(1.04);
     }
 
-    .tree-children {
+    .children {
       position: relative;
       display: flex;
       justify-content: center;
       padding-top: 30px;
     }
 
-    .tree-children::before {
+    .children::before {
       content: "";
       position: absolute;
       left: 50%;
@@ -321,10 +304,9 @@
       height: 30px;
       background: var(--line);
       transform: translateX(-50%);
-      z-index: 0;
     }
 
-    .tree-node.collapsed > .tree-children {
+    .collapsed > .children {
       display: none !important;
     }
 
@@ -335,8 +317,8 @@
       align-items: center;
       justify-content: center;
       background: rgba(2, 6, 22, 0.8);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       z-index: 50;
     }
 
@@ -349,7 +331,7 @@
       width: min(420px, calc(100vw - 32px));
       padding: 28px 24px 22px;
       border-radius: 20px;
-      background: rgba(3, 0, 20, 0.9);
+      background: rgba(3, 0, 20, 0.92);
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: 0 40px 80px rgba(2,6,23,0.8);
     }
@@ -360,7 +342,7 @@
       top: 14px;
       width: 32px;
       height: 32px;
-      border-radius: 9999px;
+      border-radius: 50%;
       border: 1px solid rgba(148,163,184,0.2);
       background: rgba(255,255,255,0.03);
       color: #cbd5e1;
@@ -396,8 +378,8 @@
     }
 
     @media (max-width: 768px) {
-      .page { padding: 32px 16px 64px; }
-      .member-card {
+      .page { padding: 30px 16px 64px; }
+      .person-card {
         width: 150px;
         min-width: 150px;
       }
@@ -405,8 +387,8 @@
   </style>
 </head>
 <body>
-  <div class="ambient-glow-one"></div>
-  <div class="ambient-glow-two"></div>
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
 
   <div class="page">
     <header class="header">
@@ -428,6 +410,96 @@
   </div>
 
   <script>
+    const familyData = {
+      name: "N P Rangiah Shetty",
+      role: "Patriarch",
+      spouse: {
+        name: "N Varalakshamma",
+        role: "Matriarch"
+      },
+      description: "Patriarch of the Nagarakanti family.",
+      children: [
+        {
+          name: "N Ranganath Gupta",
+          role: "1st Son",
+          spouse: { name: "N Sathyavathi", role: "Wife" },
+          description: "First son of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            { name: "Kiranmai Ragalatha", role: "1st Daughter", description: "First daughter of N Ranganath Gupta and N Sathyavathi." },
+            { name: "Rajeev Chandra", role: "1st Son", description: "First son of N Ranganath Gupta and N Sathyavathi." }
+          ]
+        },
+        {
+          name: "N Rama Krishna",
+          role: "2nd Son",
+          spouse: { name: "Kalpana", role: "Wife" },
+          description: "Second son of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            { name: "Nilima Dhavala", role: "1st Daughter", description: "First daughter of N Rama Krishna and Kalpana." },
+            { name: "Rakhi", role: "2nd Daughter", description: "Second daughter of N Rama Krishna and Kalpana." }
+          ]
+        },
+        {
+          name: "N Ravindranath",
+          role: "3rd Son",
+          spouse: { name: "N Vani Ravindra", role: "Wife" },
+          description: "Third son of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            { name: "Mylavaram Srujana", role: "1st Daughter", description: "First daughter of N Ravindranath and N Vani Ravindra." },
+            { name: "Sumitha", role: "2nd Daughter", description: "Second daughter of N Ravindranath and N Vani Ravindra." }
+          ]
+        },
+        {
+          name: "Rajeshwari",
+          role: "1st Daughter",
+          spouse: { name: "G Ramachandra", role: "Husband" },
+          description: "First daughter of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            { name: "G Harsha", role: "1st Son", description: "Son of Rajeshwari and G Ramachandra." },
+            { name: "G Kavya", role: "1st Daughter", description: "Daughter of Rajeshwari and G Ramachandra." }
+          ]
+        },
+        {
+          name: "Radha",
+          role: "2nd Daughter",
+          spouse: { name: "Harapanahalli Krishna Murthy", role: "Husband" },
+          description: "Second daughter of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            { name: "Aishwaraya Harapanahalli", role: "1st Daughter", description: "Daughter of Radha and Harapanahalli Krishna Murthy." },
+            { name: "Supraja Harapanahalli", role: "2nd Daughter", description: "Daughter of Radha and Harapanahalli Krishna Murthy." }
+          ]
+        },
+        {
+          name: "N Raghuram",
+          role: "4th Son",
+          spouse: { name: "N Usha Raghuram", role: "Wife" },
+          description: "Fourth son of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            {
+              name: "N Sai Prem",
+              role: "1st Son",
+              spouse: { name: "A Sai Harshitha", role: "Wife" },
+              description: "Son of N Raghuram and N Usha Raghuram.",
+              children: [
+                { name: "Aditya Ram", role: "1st Son", description: "Son of N Sai Prem and A Sai Harshitha." }
+              ]
+            },
+            { name: "N Vivek", role: "2nd Son", description: "Second son of N Raghuram and N Usha Raghuram." }
+          ]
+        },
+        {
+          name: "N Raja Shekar",
+          role: "5th Son",
+          spouse: { name: "N Sreedevi", role: "Wife" },
+          description: "Fifth son of N P Rangiah Shetty and N Varalakshamma.",
+          children: [
+            { name: "N Harika", role: "1st Daughter", description: "Daughter of N Raja Shekar and N Sreedevi." },
+            { name: "N Rahul Shekar", role: "1st Son", description: "Son of N Raja Shekar and N Sreedevi." }
+          ]
+        }
+      ]
+    };
+
     const modal = document.getElementById('modal');
     const modalName = document.getElementById('modal-name');
     const modalText = document.getElementById('modal-text');
@@ -439,79 +511,64 @@
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/\"/g, '&quot;')
+        .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
     }
 
-    function personCard(person) {
+    function cardMarkup(person) {
       return `
-        <div class="member-card" data-name="${escapeHtml(person.name)}" data-desc="${escapeHtml(person.description || '')}">
+        <div class="person-card" data-name="${escapeHtml(person.name)}" data-desc="${escapeHtml(person.description || '')}">
           <span class="name">${escapeHtml(person.name)}</span>
           <span class="role">${escapeHtml(person.role || '')}</span>
         </div>
       `;
     }
 
-    function coupleConnector(person) {
+    function coupleConnectorMarkup(person) {
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
-      const expanded = !collapsed.has(person.id);
-      const connectorClass = hasChildren ? 'has-children' : '';
-      const toggle = hasChildren
-        ? `<button class="toggle-btn" type="button" data-id="${person.id}">${expanded ? '-' : '+'}</button>`
-        : '';
+      const isOpen = !collapsed.has(person.name);
 
       return `
-        <div class="couple-connector ${connectorClass}">
-          ${toggle}
+        <div class="couple-connector ${hasChildren ? 'has-children' : ''}">
+          ${hasChildren ? `<button class="toggle-btn" type="button" data-name="${escapeHtml(person.name)}">${isOpen ? '-' : '+'}</button>` : ''}
         </div>
       `;
     }
 
-    function renderMember(person) {
+    function renderPerson(person) {
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
-      const isCollapsed = hasChildren && collapsed.has(person.id);
-      const pairMarkup = person.spouse
-        ? `
-          <div class="family-pair">
-            ${personCard(person)}
-            ${coupleConnector(person)}
-            ${personCard(person.spouse)}
-          </div>
-        `
-        : `
-          <div class="family-pair">
-            ${personCard(person)}
-          </div>
-        `;
 
-      const childMarkup = hasChildren
-        ? `<ul class="tree-children">${person.children.map(child => `<li>${renderMember(child)}</li>`).join('')}</ul>`
-        : '';
-
-      return `
-        <li class="tree-node ${isCollapsed ? 'collapsed' : ''}">
-          <div class="family-node">${pairMarkup}</div>
-          ${childMarkup}
+      const base = `
+        <li class="${hasChildren && collapsed.has(person.name) ? 'collapsed' : ''}">
+          <div class="family-unit">
+            ${cardMarkup(person)}
+            ${person.spouse ? coupleConnectorMarkup(person) : ''}
+            ${person.spouse ? cardMarkup(person.spouse) : ''}
+          </div>
+          ${hasChildren ? `
+            <ul class="children">
+              ${person.children.map(child => renderPerson(child)).join('')}
+            </ul>
+          ` : ''}
         </li>
       `;
+
+      return base;
     }
 
-    function renderTree(data) {
+    function renderTree() {
       const root = document.getElementById('tree');
       root.innerHTML = `
         <ul>
-          <li>
-            ${renderMember(data.familyTree)}
-          </li>
+          ${renderPerson(familyData)}
         </ul>
       `;
-
-      bindMemberClicks();
-      bindToggleButtons();
+      bindClickEvents();
+      bindToggleEvents();
     }
 
-    function bindMemberClicks() {
-      document.querySelectorAll('.member-card').forEach(card => {
+    function bindClickEvents() {
+      document.querySelectorAll('.person-card').forEach(card => {
         card.addEventListener('click', () => {
           const name = card.dataset.name;
           const desc = card.dataset.desc || 'No details available.';
@@ -523,22 +580,21 @@
       });
     }
 
-    function bindToggleButtons() {
+    function bindToggleEvents() {
       document.querySelectorAll('.toggle-btn').forEach(btn => {
         btn.addEventListener('click', (event) => {
           event.stopPropagation();
-          const id = btn.dataset.id;
-          const target = btn.closest('.tree-node');
-          if (!target) return;
+          const nodeName = btn.dataset.name;
+          const parentLi = btn.closest('li');
 
-          if (collapsed.has(id)) {
-            collapsed.delete(id);
+          if (collapsed.has(nodeName)) {
+            collapsed.delete(nodeName);
             btn.textContent = '-';
-            target.classList.remove('collapsed');
+            parentLi.classList.remove('collapsed');
           } else {
-            collapsed.add(id);
+            collapsed.add(nodeName);
             btn.textContent = '+';
-            target.classList.add('collapsed');
+            parentLi.classList.add('collapsed');
           }
         });
       });
@@ -560,13 +616,7 @@
       }
     });
 
-    fetch('family-data.json')
-      .then(response => response.ok ? response.json() : Promise.reject(new Error('Failed to load family data')))
-      .then(data => renderTree(data))
-      .catch(error => {
-        console.error(error);
-        document.getElementById('tree').innerHTML = '<p style="color: white; padding: 20px;">Unable to load family data.</p>';
-      });
+    renderTree();
   </script>
 </body>
 </html>
