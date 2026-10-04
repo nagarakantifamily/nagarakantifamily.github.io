@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagarakanti Family Tree</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #030014;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            /* Hide scrollbars but keep functionality */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tree {
+            position: relative;
+            z-index: 10;
+        }
+
+        .tree ul, .tree li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        /* Generation Container */
+        .tree ul {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            padding-top: 40px; /* Exact space for vertical drop line */
+            transition: all 0.4s ease;
+        }
+        /* Root ul has no top padding because nothing drops into it */
+        .tree > ul { padding-top: 0; }
+
+        /* Node Wrapper */
+        .tree li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            /* Padding replaces flex-gap to ensure 50% width calculations are perfect */
+            padding: 40px 1rem 0 1rem; 
+        }
+        /* Root li has no top padding */
+        .tree > ul > li { padding-top: 0; }
+
+        /* --- 1. Horizontal Sibling Connectors --- */
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 2px;
+            background-color: #475569; /* slate-600 */
+            z-index: -2;
+        }
+        .tree li::before { left: 0; }
+        .tree li::after { right: 0; }
+
+        /* Edge Cases for Sibling Lines */
+        .tree li:only-child::before, .tree li:only-child::after { display: none; }
+        .tree li:first-child::before { display: none; }
+        .tree li:last-child::after { display: none; }
+
+        /* --- 2. Vertical Line from Sibling Connector down to Family Unit --- */
+        .tree li > .family-unit::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: calc(50% - 1px); /* mathematically perfect pixel center */
+            width: 2px;
+            height: 40px;
+            background-color: #475569;
+            z-index: -2;
+        }
+        /* Root element doesn't have an upward drop line */
+        .tree > ul > li > .family-unit::before { display: none !important; }
+
+        /* --- 3. Vertical Line from Parent down to Children's Sibling Connector --- */
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: calc(50% - 1px);
+            width: 2px;
+            height: 40px;
+            background-color: #475569;
+            z-index: -2;
+        }
+
+        .hidden-tree {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="overflow-x-auto overflow-y-auto">
+
+    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-blue-900/20 blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-purple-900/20 blur-[120px] pointer-events-none z-0"></div>
+
+    <div class="w-max min-w-full mx-auto pt-10 pb-32 px-12 relative z-10 flex flex-col items-center">
+        
+        <div class="text-center mb-16">
+            <h2 class="text-cyan-400 text-[10px] font-bold tracking-[0.3em] uppercase mb-2">Lineage & Legacy</h2>
+            <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Nagarakanti Family</h1>
+            <p class="text-slate-400 mt-2 text-xs leading-relaxed">
+                Click on any family member to view their information.
+            </p>
+        </div>
+
+        <div class="tree">
+            <ul>
+                <li>
+                    <div class="family-unit flex items-center relative justify-center">
+                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N P Rangiah Shetty')">
+                            <span class="font-semibold text-sm text-center px-2">N P Rangiah Shetty</span>
+                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Husband</span>
+                        </div>
+                        
+                        <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                            <!-- Horizontal couple crossbar -->
+                            <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                            <!-- Vertical drop to children (starts at center, goes down to bottom of card) -->
+                            <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                            <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer transition-colors hover:bg-cyan-900/50" onclick="toggleBranch(this)">
+                                <span class="mb-[2px] font-bold text-lg leading-none">-</span>
+                            </button>
+                        </div>
+                        
+                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Varalkshmamma')">
+                            <span class="font-semibold text-sm text-center px-2">N Varalkshmamma</span>
+                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                        </div>
+                    </div>
+
+                    <ul>
+                        <!-- 1st Son -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Ranganath Gupta')">
+                                    <span class="font-semibold text-sm text-center px-2">N Ranganath Gupta</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Son</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Sathyavathi')">
+                                    <span class="font-semibold text-sm text-center px-2">N Sathyavathi</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Kiranmai Ragalatha')">
+                                            <span class="font-semibold text-sm text-center px-2">Kiranmai Ragalatha</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Rajeev Chandra')">
+                                            <span class="font-semibold text-sm text-center px-2">Rajeev Chandra</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Son</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 2nd Son -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Rama Krishna')">
+                                    <span class="font-semibold text-sm text-center px-2">N Rama Krishna</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">2nd Son</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Kalpana')">
+                                    <span class="font-semibold text-sm text-center px-2">Kalpana</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Nilima Dhavala')">
+                                            <span class="font-semibold text-sm text-center px-2">Nilima Dhavala</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Rakhi')">
+                                            <span class="font-semibold text-sm text-center px-2">Rakhi</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">2nd Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 3rd Son -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Ravindranath')">
+                                    <span class="font-semibold text-sm text-center px-2">N Ravindranath</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">3rd Son</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Vani ravindra')">
+                                    <span class="font-semibold text-sm text-center px-2">N Vani ravindra</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Srujana')">
+                                            <span class="font-semibold text-sm text-center px-2">Srujana</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Sumitha')">
+                                            <span class="font-semibold text-sm text-center px-2">Sumitha</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">2nd Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 1st Daughter -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Rajeshwari')">
+                                    <span class="font-semibold text-sm text-center px-2">Rajeshwari</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('G Ramachandra')">
+                                    <span class="font-semibold text-sm text-center px-2">G Ramachandra</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Husband</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('G Harsha')">
+                                            <span class="font-semibold text-sm text-center px-2">G Harsha</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Son</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('G Kavya')">
+                                            <span class="font-semibold text-sm text-center px-2">G Kavya</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 2nd Daughter -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Radha')">
+                                    <span class="font-semibold text-sm text-center px-2">Radha</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">2nd Daughter</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Krishnamoorthy')">
+                                    <span class="font-semibold text-sm text-center px-2">Krishnamoorthy</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Husband</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Harpanahalli Aishwaraya')">
+                                            <span class="font-semibold text-sm text-center px-2">Harpanahalli Aishwaraya</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('H Suparaja')">
+                                            <span class="font-semibold text-sm text-center px-2">H Suparaja</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">2nd Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 4th Son -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Raghuram')">
+                                    <span class="font-semibold text-sm text-center px-2">N Raghuram</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">4th Son</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Usha Raghuram')">
+                                    <span class="font-semibold text-sm text-center px-2">N Usha Raghuram</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <!-- Generation 3 / Child 1 (Married) -->
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Sai Prem')">
+                                            <span class="font-semibold text-sm text-center px-2">N Sai Prem</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Son</span>
+                                        </div>
+                                        <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                            <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                            <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                            <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                        </div>
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('A Sai Harshitha')">
+                                            <span class="font-semibold text-sm text-center px-2">A Sai Harshitha</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <li>
+                                            <div class="family-unit flex items-center relative justify-center">
+                                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('Aditya Ram')">
+                                                    <span class="font-semibold text-sm text-center px-2">Aditya Ram</span>
+                                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Son</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <!-- Generation 3 / Child 2 -->
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Vivek')">
+                                            <span class="font-semibold text-sm text-center px-2">N Vivek</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">2nd Son</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 5th Son -->
+                        <li>
+                            <div class="family-unit flex items-center relative justify-center">
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Raja Shekar')">
+                                    <span class="font-semibold text-sm text-center px-2">N Raja Shekar</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">5th Son</span>
+                                </div>
+                                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
+                                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
+                                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer hover:bg-cyan-900/50 transition-colors" onclick="toggleBranch(this)"><span class="mb-[2px] font-bold text-lg leading-none">-</span></button>
+                                </div>
+                                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Sreedevi')">
+                                    <span class="font-semibold text-sm text-center px-2">N Sreedevi</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">Wife</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Harika')">
+                                            <span class="font-semibold text-sm text-center px-2">N Harika</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Daughter</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="family-unit flex items-center relative justify-center">
+                                        <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all z-10" onclick="openModal('N Rahul Shekar')">
+                                            <span class="font-semibold text-sm text-center px-2">N Rahul Shekar</span>
+                                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">1st Son</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
+        <div class="bg-[#030014] border border-white/10 rounded-xl p-8 max-w-sm w-full mx-4 shadow-2xl relative flex flex-col items-center">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors">✕</button>
+            <h3 id="modal-name" class="text-xl font-bold text-white mb-2 text-center mt-2">Name</h3>
+            <div class="w-12 h-[2px] bg-cyan-500 mb-4 rounded-full opacity-75"></div>
+            <p class="text-slate-400 text-sm text-center leading-relaxed">Add description here...</p>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalName = document.getElementById('modal-name');
+
+        function openModal(name) {
+            modalName.textContent = name;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+        });
+
+        function toggleBranch(btn) {
+            const li = btn.closest('li');
+            
+            let childUl = null;
+            for (let i = 0; i < li.children.length; i++) {
+                if (li.children[i].tagName.toLowerCase() === 'ul') {
+                    childUl = li.children[i];
+                    break;
+                }
+            }
+            
+            if (childUl) {
+                if (childUl.classList.contains('hidden-tree')) {
+                    childUl.classList.remove('hidden-tree');
+                    btn.querySelector('span').textContent = '-';
+                } else {
+                    childUl.classList.add('hidden-tree');
+                    btn.querySelector('span').textContent = '+';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
