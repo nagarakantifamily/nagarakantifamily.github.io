@@ -1,415 +1,553 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nagarakanti Family Tree</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- ============================================
-         SECTION 1: STYLES (Global + Tree Layout)
-         ============================================ -->
-    <style>
-        /* --- Core Theme --- */
-        body {
-            background-color: #030014;
-            font-family: 'Inter', sans-serif;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        body::-webkit-scrollbar {
-            display: none;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nagarakanti Family Tree</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030014;
+      --panel: rgba(15, 23, 42, 0.38);
+      --panel-border: rgba(148, 163, 184, 0.18);
+      --line: rgba(148, 163, 184, 0.7);
+      --line-soft: rgba(148, 163, 184, 0.5);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --cyan: #67e8f9;
+      --cyan-strong: #22d3ee;
+      --magenta: rgba(168, 85, 247, 0.25);
+      --blue: rgba(59, 130, 246, 0.18);
+    }
 
-        /* --- Tree Structure --- */
-        .tree {
-            position: relative;
-            z-index: 10;
-        }
+    * { box-sizing: border-box; }
 
-        .tree ul, .tree li {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: auto;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
-        .tree ul {
-            display: flex;
-            justify-content: center;
-            position: relative;
-            padding-top: 40px;
-            transition: all 0.4s ease;
-        }
-        .tree > ul { padding-top: 0; }
+    body::-webkit-scrollbar { display: none; }
 
-        .tree li {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            padding: 40px 1rem 0 1rem;
-        }
-        .tree > ul > li { padding-top: 0; }
+    body {
+      position: relative;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(59,130,246,0.18), transparent 30%),
+        radial-gradient(circle at 85% 85%, rgba(168,85,247,0.18), transparent 35%),
+        var(--bg);
+    }
 
-        /* --- Connectors: Horizontal Lines --- */
-        .tree li::before, .tree li::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 50%;
-            height: 2px;
-            background-color: #475569;
-            z-index: -2;
-        }
-        .tree li::before { left: 0; }
-        .tree li::after { right: 0; }
+    .ambient-glow-one,
+    .ambient-glow-two {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.9;
+    }
 
-        .tree li:only-child::before, .tree li:only-child::after { display: none; }
-        .tree li:first-child::before { display: none; }
-        .tree li:last-child::after { display: none; }
+    .ambient-glow-one {
+      width: 40vw;
+      height: 40vw;
+      top: -10%;
+      left: -10%;
+      background: rgba(59, 130, 246, 0.18);
+    }
 
-        /* --- Connectors: Vertical Lines --- */
-        .tree li > .family-unit::before {
-            content: '';
-            position: absolute;
-            top: -40px;
-            left: calc(50% - 1px);
-            width: 2px;
-            height: 40px;
-            background-color: #475569;
-            z-index: -2;
-        }
-        .tree > ul > li > .family-unit::before { display: none !important; }
+    .ambient-glow-two {
+      width: 35vw;
+      height: 35vw;
+      bottom: -10%;
+      right: -10%;
+      background: rgba(168, 85, 247, 0.18);
+    }
 
-        .tree ul ul::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: calc(50% - 1px);
-            width: 2px;
-            height: 40px;
-            background-color: #475569;
-            z-index: -2;
-        }
+    .page {
+      position: relative;
+      z-index: 1;
+      width: max-content;
+      min-width: 100%;
+      padding: 56px 32px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        /* --- Utility Classes --- */
-        .hidden-tree {
-            display: none !important;
-        }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-        /* --- Card Hover Effect --- */
-        .person-card {
-            transition: all 0.3s ease;
-        }
-        .person-card:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.30em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
 
-        /* --- Modal Backdrop --- */
-        #modal.modal-open {
-            display: flex !important;
-        }
-    </style>
+    .title {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: #fff;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .tree {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      width: max-content;
+      min-width: 100%;
+    }
+
+    .tree ul,
+    .tree li {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tree ul {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 30px;
+    }
+
+    .tree > ul { padding-top: 0; }
+
+    .tree li {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 26px 14px 0;
+    }
+
+    .tree li::before,
+    .tree li::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 2px;
+      background: var(--line);
+      z-index: 0;
+    }
+
+    .tree li::before { left: 0; }
+    .tree li::after { right: 0; }
+
+    .tree li:first-child::before,
+    .tree li:last-child::after { display: none; }
+    .tree li:only-child::before,
+    .tree li:only-child::after { display: none; }
+
+    .family-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+    }
+
+    .family-node::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -30px;
+      width: 2px;
+      height: 30px;
+      background: var(--line);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+
+    .tree > ul > li > .family-node::before { display: none; }
+
+    .tree-children {
+      position: relative;
+      padding-top: 30px;
+    }
+
+    .tree-children::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 30px;
+      background: var(--line);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+
+    .member-card {
+      position: relative;
+      z-index: 2;
+      width: 182px;
+      min-width: 182px;
+      height: 90px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      cursor: pointer;
+    }
+
+    .member-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(103,232,249,0.35);
+    }
+
+    .member-card .name {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 600;
+      color: #fff;
+      width: 100%;
+      word-break: break-word;
+    }
+
+    .member-card .role {
+      display: block;
+      margin-top: 9px;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+
+    .couple-connector {
+      position: relative;
+      z-index: 1;
+      width: 84px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 2px;
+    }
+
+    .couple-connector::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      transform: translate(-50%, -50%);
+      background: var(--line);
+    }
+
+    .couple-connector::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 2px;
+      height: 42px;
+      background: var(--line);
+      transform: translateX(-50%);
+    }
+
+    .toggle-btn {
+      position: relative;
+      z-index: 3;
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      border: 1px solid rgba(103,232,249,0.8);
+      background: rgba(3,0,20,0.9);
+      color: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(103,232,249,0.08);
+      transform: scale(1.04);
+    }
+
+    .collapsed > .tree-children {
+      display: none !important;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 22, 0.8);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 50;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(420px, calc(100vw - 32px));
+      padding: 28px 24px 22px;
+      border-radius: 20px;
+      background: rgba(3, 0, 20, 0.9);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 40px 80px rgba(2,6,23,0.8);
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      border: 1px solid rgba(148,163,184,0.2);
+      background: rgba(255,255,255,0.03);
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-name {
+      margin: 0 0 12px;
+      font-size: 26px;
+      line-height: 1.2;
+      text-align: center;
+      color: #fff;
+    }
+
+    .divider {
+      width: 48px;
+      height: 2px;
+      background: rgba(103,232,249,0.85);
+      margin: 0 auto 18px;
+      border-radius: 9999px;
+    }
+
+    .modal-text {
+      margin: 0;
+      text-align: center;
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .page { padding: 32px 16px 64px; }
+      .member-card {
+        width: 150px;
+        min-width: 150px;
+      }
+    }
+  </style>
 </head>
-<body class="overflow-x-auto overflow-y-auto">
+<body>
+  <div class="ambient-glow-one"></div>
+  <div class="ambient-glow-two"></div>
 
-    <!-- ============================================
-         SECTION 2: BACKGROUND ELEMENTS
-         ============================================ -->
-    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-blue-900/20 blur-[120px] pointer-events-none z-0"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-purple-900/20 blur-[120px] pointer-events-none z-0"></div>
+  <div class="page">
+    <header class="header">
+      <p class="eyebrow">Lineage &amp; Legacy</p>
+      <h1 class="title">Nagarakanti Family</h1>
+      <p class="subtitle">Click on any family member to view their information.</p>
+    </header>
 
-    <!-- ============================================
-         SECTION 3: HEADER
-         ============================================ -->
-    <div class="w-max min-w-full mx-auto pt-10 pb-32 px-12 relative z-10 flex flex-col items-center">
-        <div class="text-center mb-16">
-            <h2 class="text-cyan-400 text-[10px] font-bold tracking-[0.3em] uppercase mb-2">Lineage & Legacy</h2>
-            <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Nagarakanti Family</h1>
-            <p class="text-slate-400 mt-2 text-xs leading-relaxed">
-                Click on any family member to view their information.
-            </p>
-        </div>
+    <div id="tree" class="tree"></div>
+  </div>
 
-        <!-- ============================================
-             SECTION 4: TREE CONTAINER (Rendered via JS)
-             ============================================ -->
-        <div class="tree" id="tree-root"></div>
+  <div id="modal" class="modal" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <button class="close-btn" aria-label="Close details" type="button">×</button>
+      <h2 id="modal-name" class="modal-name">Name</h2>
+      <div class="divider"></div>
+      <p id="modal-text" class="modal-text">No details available.</p>
     </div>
+  </div>
 
-    <!-- ============================================
-         SECTION 5: MODAL
-         ============================================ -->
-    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
-        <div class="bg-[#030014] border border-white/10 rounded-xl p-8 max-w-sm w-full mx-4 shadow-2xl relative flex flex-col items-center">
-            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer">
-                <span class="text-lg">✕</span>
-            </button>
-            <h3 id="modal-name" class="text-xl font-bold text-white mb-2 text-center mt-2">Name</h3>
-            <div class="w-12 h-[2px] bg-cyan-500 mb-4 rounded-full opacity-75"></div>
-            <p id="modal-description" class="text-slate-400 text-sm text-center leading-relaxed">Add description here...</p>
+  <script>
+    const modal = document.getElementById('modal');
+    const modalName = document.getElementById('modal-name');
+    const modalText = document.getElementById('modal-text');
+    const closeBtn = document.querySelector('.close-btn');
+
+    const collapsed = new Set();
+
+    function cardMarkup(person) {
+      return `
+        <div class="member-card" data-name="${escapeHtml(person.name)}" data-role="${escapeHtml(person.role || '')}" data-desc="${escapeHtml(person.description || '')}">
+          <span class="name">${escapeHtml(person.name)}</span>
+          <span class="role">${escapeHtml(person.role || '')}</span>
         </div>
-    </div>
+      `;
+    }
 
-    <!-- ============================================
-         SECTION 6: DATA & RENDERING LOGIC
-         ============================================ -->
-    <script>
-        // ========== 6.1: FAMILY DATA ==========
-        // Organized hierarchically for easy updates
-        const familyData = {
-            name: "N P Rangiah Shetty",
-            role: "Husband",
-            spouse: "N Varalakshamma",
-            spouseRole: "Wife",
-            description: "Patriarch of the Nagarakanti family",
-            children: [
-                {
-                    name: "N Ranganath Gupta",
-                    role: "1st Son",
-                    spouse: "N Sathyavathi",
-                    spouseRole: "Wife",
-                    description: "First son of N P Rangiah Shetty",
-                    children: [
-                        { name: "Kiranmai Ragalatha", role: "1st Daughter", description: "First daughter of Ranganath" },
-                        { name: "Rajeev Chandra", role: "1st Son", description: "First son of Ranganath" }
-                    ]
-                },
-                {
-                    name: "N Rama Krishna",
-                    role: "2nd Son",
-                    spouse: "Kalpana",
-                    spouseRole: "Wife",
-                    description: "Second son of N P Rangiah Shetty",
-                    children: [
-                        { name: "Nilima Dhavala", role: "1st Daughter", description: "First daughter of Rama Krishna" },
-                        { name: "Rakhi", role: "2nd Daughter", description: "Second daughter of Rama Krishna" }
-                    ]
-                },
-                {
-                    name: "N Ravindranath",
-                    role: "3rd Son",
-                    spouse: "N Vani ravindra",
-                    spouseRole: "Wife",
-                    description: "Third son of N P Rangiah Shetty",
-                    children: [
-                        { name: "Mylavaram Srujana", role: "1st Daughter", description: "First daughter of Ravindranath" },
-                        { name: "Sumitha", role: "2nd Daughter", description: "Second daughter of Ravindranath" }
-                    ]
-                },
-                {
-                    name: "Rajeshwari",
-                    role: "1st Daughter",
-                    spouse: "G Ramachandra",
-                    spouseRole: "Husband",
-                    description: "First daughter of N P Rangiah Shetty",
-                    children: [
-                        { name: "G Harsha", role: "1st Son", description: "Son of Rajeshwari and G Ramachandra" },
-                        { name: "G Kavya", role: "1st Daughter", description: "Daughter of Rajeshwari and G Ramachandra" }
-                    ]
-                },
-                {
-                    name: "Radha",
-                    role: "2nd Daughter",
-                    spouse: "Harapanahalli Krishna Murthy",
-                    spouseRole: "Husband",
-                    description: "Second daughter of N P Rangiah Shetty",
-                    children: [
-                        { name: "Aishwaraya Harapanahalli", role: "1st Daughter", description: "Daughter of Radha and Krishna Murthy" },
-                        { name: "Supraja Harapanahalli", role: "2nd Daughter", description: "Daughter of Radha and Krishna Murthy" }
-                    ]
-                },
-                {
-                    name: "N Raghuram",
-                    role: "4th Son",
-                    spouse: "N Usha Raghuram",
-                    spouseRole: "Wife",
-                    description: "Fourth son of N P Rangiah Shetty",
-                    children: [
-                        {
-                            name: "N Sai Prem",
-                            role: "1st Son",
-                            spouse: "A Sai Harshitha",
-                            spouseRole: "Wife",
-                            description: "Son of N Raghuram",
-                            children: [
-                                { name: "Aditya Ram", role: "1st Son", description: "Grandson of N Raghuram" }
-                            ]
-                        },
-                        { name: "N Vivek", role: "2nd Son", description: "Second son of N Raghuram" }
-                    ]
-                },
-                {
-                    name: "N Raja Shekar",
-                    role: "5th Son",
-                    spouse: "N Sreedevi",
-                    spouseRole: "Wife",
-                    description: "Fifth son of N P Rangiah Shetty",
-                    children: [
-                        { name: "N Harika", role: "1st Daughter", description: "Daughter of N Raja Shekar" },
-                        { name: "N Rahul Shekar", role: "1st Son", description: "Son of N Raja Shekar" }
-                    ]
-                }
-            ]
-        };
+    function spouseMarkup(person) {
+      if (!person.spouse) return '';
 
-        // ========== 6.2: HELPER: Create Person Card ==========
-        function createPersonCard(name, role, onClickName) {
-            return `
-                <div class="person-card w-48 h-24 flex-shrink-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col items-center justify-center text-white cursor-pointer" onclick="openModal('${onClickName}')">
-                    <span class="font-semibold text-sm text-center px-2">${name}</span>
-                    <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 mt-1.5">${role}</span>
-                </div>
-            `;
-        }
+      const hasChildren = Array.isArray(person.children) && person.children.length > 0;
 
-        // ========== 6.3: HELPER: Create Couple Connector ==========
-        function createCoupleConnector(personName) {
-            return `
-                <div class="w-12 h-24 flex items-center justify-center relative flex-shrink-0">
-                    <div class="absolute w-full h-[2px] bg-[#475569] top-1/2 -translate-y-1/2"></div>
-                    <div class="absolute h-1/2 w-[2px] bg-[#475569] bottom-0 left-1/2 -translate-x-1/2"></div>
-                    <button class="toggle-btn z-10 w-6 h-6 rounded-full border border-cyan-400 text-cyan-400 bg-[#030014] flex items-center justify-center cursor-pointer transition-colors hover:bg-cyan-400/20" onclick="toggleBranch(this)">
-                        <span class="mb-[2px] font-bold text-lg leading-none">-</span>
-                    </button>
-                </div>
-            `;
-        }
+      return `
+        <div class="couple-connector">
+          ${hasChildren ? `<button class="toggle-btn" type="button" data-id="${person.id}">${collapsed.has(person.id) ? '+' : '-'}</button>` : ''}
+        </div>
+      `;
+    }
 
-        // ========== 6.4: RECURSIVE: Render Child Tree ==========
-        function renderChildTree(person) {
-            let html = '<div class="family-unit flex items-center relative justify-center">';
-            
-            html += createPersonCard(person.name, person.role, person.name);
+    function renderMember(person) {
+      const hasChildren = Array.isArray(person.children) && person.children.length > 0;
+      const branchClass = hasChildren && collapsed.has(person.id) ? 'collapsed' : '';
 
-            if (person.spouse) {
-                html += createCoupleConnector(person.name);
-                html += createPersonCard(person.spouse, person.spouseRole, person.spouse);
-            }
+      const childrenMarkup = hasChildren
+        ? `<ul class="tree-children">${person.children.map(child => `<li>${renderMember(child)}</li>`).join('')}</ul>`
+        : '';
 
-            html += '</div>';
+      const spouseCard = person.spouse ? cardMarkup(person.spouse) : '';
 
-            if (person.children && person.children.length > 0) {
-                html += '<ul>';
-                person.children.forEach(child => {
-                    html += '<li>' + renderChildTree(child) + '</li>';
-                });
-                html += '</ul>';
-            }
+      return `
+        <li class="tree-node ${branchClass}">
+          <div class="family-node">
+            ${cardMarkup(person)}
+            ${person.spouse ? spouseMarkup(person) : ''}
+            ${person.spouse ? spouseCard : ''}
+          </div>
+          ${childrenMarkup}
+        </li>
+      `;
+    }
 
-            return html;
-        }
+    function renderTree(data) {
+      const root = document.getElementById('tree');
+      root.innerHTML = `
+        <ul class="tree-root">
+          <li>
+            ${renderMember(data.familyTree)}
+          </li>
+        </ul>
+      `;
 
-        // ========== 6.5: RENDER on DOM Load ==========
-        document.addEventListener('DOMContentLoaded', () => {
-            const treeRoot = document.getElementById('tree-root');
-            
-            // Render family-unit for root
-            let rootHtml = '<ul><li>';
-            rootHtml += '<div class="family-unit flex items-center relative justify-center">';
-            rootHtml += createPersonCard(familyData.name, familyData.role, familyData.name);
-            rootHtml += createCoupleConnector(familyData.name);
-            rootHtml += createPersonCard(familyData.spouse, familyData.spouseRole, familyData.spouse);
-            rootHtml += '</div>';
+      bindMemberClicks();
+      bindToggleButtons();
+    }
 
-            // Render all children
-            if (familyData.children && familyData.children.length > 0) {
-                rootHtml += '<ul>';
-                familyData.children.forEach(child => {
-                    rootHtml += '<li>';
-                    rootHtml += renderChildTree(child);
-                    rootHtml += '</li>';
-                });
-                rootHtml += '</ul>';
-            }
-
-            rootHtml += '</li></ul>';
-            treeRoot.innerHTML = rootHtml;
-
-            // Attach event listeners after rendering
-            attachEventListeners();
+    function bindMemberClicks() {
+      document.querySelectorAll('.member-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const name = card.dataset.name;
+          const desc = card.dataset.desc || 'No details available.';
+          modalName.textContent = name;
+          modalText.textContent = desc;
+          modal.classList.add('open');
+          document.body.style.overflow = 'hidden';
         });
+      });
+    }
 
-        // ========== 6.6: EVENT: Attach Listeners ==========
-        function attachEventListeners() {
-            const toggleBtns = document.querySelectorAll('.toggle-btn');
-            toggleBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    toggleBranch(this);
-                });
-            });
-        }
+    function bindToggleButtons() {
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const id = btn.dataset.id;
+          if (collapsed.has(id)) {
+            collapsed.delete(id);
+            btn.textContent = '-';
+          } else {
+            collapsed.add(id);
+            btn.textContent = '+';
+          }
 
-        // ========== 6.7: TOGGLE BRANCH ==========
-        function toggleBranch(btn) {
-            const li = btn.closest('li');
-            let childUl = null;
-
-            for (let i = 0; i < li.children.length; i++) {
-                if (li.children[i].tagName.toLowerCase() === 'ul') {
-                    childUl = li.children[i];
-                    break;
-                }
-            }
-
-            if (childUl) {
-                if (childUl.classList.contains('hidden-tree')) {
-                    childUl.classList.remove('hidden-tree');
-                    btn.querySelector('span').textContent = '-';
-                } else {
-                    childUl.classList.add('hidden-tree');
-                    btn.querySelector('span').textContent = '+';
-                }
-            }
-        }
-
-        // ========== 6.8: MODAL MANAGEMENT ==========
-        const modal = document.getElementById('modal');
-        const modalName = document.getElementById('modal-name');
-        const modalDescription = document.getElementById('modal-description');
-
-        function openModal(name) {
-            // Find person data and display
-            const person = findPersonByName(name, familyData);
-            if (person) {
-                modalName.textContent = name;
-                modalDescription.textContent = person.description || "No description available.";
-            }
-            modal.classList.add('modal-open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            modal.classList.remove('modal-open');
-            document.body.style.overflow = '';
-        }
-
-        function findPersonByName(name, person) {
-            if (person.name === name || person.spouse === name) return person;
-            if (person.children) {
-                for (let child of person.children) {
-                    const found = findPersonByName(name, child);
-                    if (found) return found;
-                }
-            }
-            return null;
-        }
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
+          const parentNode = btn.closest('.tree-node');
+          if (parentNode) {
+            parentNode.classList.toggle('collapsed');
+          }
         });
+      });
+    }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-    </script>
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function openModal() {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    fetch('family-data.json')
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Failed to load family data')))
+      .then(data => renderTree(data))
+      .catch(error => {
+        console.error(error);
+        document.getElementById('tree').innerHTML = '<p style="color: white; padding: 20px;">Unable to load family data.</p>';
+      });
+  </script>
 </body>
 </html>
