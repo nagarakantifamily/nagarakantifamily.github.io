@@ -164,6 +164,11 @@
     .tree li:only-child::before,
     .tree li:only-child::after { display: none; }
 
+    .tree-node {
+      position: relative;
+      z-index: 1;
+    }
+
     .family-node {
       position: relative;
       z-index: 2;
@@ -187,21 +192,12 @@
 
     .tree > ul > li > .family-node::before { display: none; }
 
-    .tree-children {
+    .family-pair {
       position: relative;
-      padding-top: 30px;
-    }
-
-    .tree-children::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: 2px;
-      height: 30px;
-      background: var(--line);
-      transform: translateX(-50%);
-      z-index: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .member-card {
@@ -274,7 +270,7 @@
       background: var(--line);
     }
 
-    .couple-connector::after {
+    .couple-connector.has-children::after {
       content: "";
       position: absolute;
       left: 50%;
@@ -309,7 +305,26 @@
       transform: scale(1.04);
     }
 
-    .collapsed > .tree-children {
+    .tree-children {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      padding-top: 30px;
+    }
+
+    .tree-children::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 30px;
+      background: var(--line);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+
+    .tree-node.collapsed > .tree-children {
       display: none !important;
     }
 
@@ -417,48 +432,66 @@
     const modalName = document.getElementById('modal-name');
     const modalText = document.getElementById('modal-text');
     const closeBtn = document.querySelector('.close-btn');
-
     const collapsed = new Set();
 
-    function cardMarkup(person) {
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function personCard(person) {
       return `
-        <div class="member-card" data-name="${escapeHtml(person.name)}" data-role="${escapeHtml(person.role || '')}" data-desc="${escapeHtml(person.description || '')}">
+        <div class="member-card" data-name="${escapeHtml(person.name)}" data-desc="${escapeHtml(person.description || '')}">
           <span class="name">${escapeHtml(person.name)}</span>
           <span class="role">${escapeHtml(person.role || '')}</span>
         </div>
       `;
     }
 
-    function spouseMarkup(person) {
-      if (!person.spouse) return '';
-
+    function coupleConnector(person) {
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
+      const expanded = !collapsed.has(person.id);
+      const connectorClass = hasChildren ? 'has-children' : '';
+      const toggle = hasChildren
+        ? `<button class="toggle-btn" type="button" data-id="${person.id}">${expanded ? '-' : '+'}</button>`
+        : '';
 
       return `
-        <div class="couple-connector">
-          ${hasChildren ? `<button class="toggle-btn" type="button" data-id="${person.id}">${collapsed.has(person.id) ? '+' : '-'}</button>` : ''}
+        <div class="couple-connector ${connectorClass}">
+          ${toggle}
         </div>
       `;
     }
 
     function renderMember(person) {
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
-      const branchClass = hasChildren && collapsed.has(person.id) ? 'collapsed' : '';
+      const isCollapsed = hasChildren && collapsed.has(person.id);
+      const pairMarkup = person.spouse
+        ? `
+          <div class="family-pair">
+            ${personCard(person)}
+            ${coupleConnector(person)}
+            ${personCard(person.spouse)}
+          </div>
+        `
+        : `
+          <div class="family-pair">
+            ${personCard(person)}
+          </div>
+        `;
 
-      const childrenMarkup = hasChildren
+      const childMarkup = hasChildren
         ? `<ul class="tree-children">${person.children.map(child => `<li>${renderMember(child)}</li>`).join('')}</ul>`
         : '';
 
-      const spouseCard = person.spouse ? cardMarkup(person.spouse) : '';
-
       return `
-        <li class="tree-node ${branchClass}">
-          <div class="family-node">
-            ${cardMarkup(person)}
-            ${person.spouse ? spouseMarkup(person) : ''}
-            ${person.spouse ? spouseCard : ''}
-          </div>
-          ${childrenMarkup}
+        <li class="tree-node ${isCollapsed ? 'collapsed' : ''}">
+          <div class="family-node">${pairMarkup}</div>
+          ${childMarkup}
         </li>
       `;
     }
@@ -466,7 +499,7 @@
     function renderTree(data) {
       const root = document.getElementById('tree');
       root.innerHTML = `
-        <ul class="tree-root">
+        <ul>
           <li>
             ${renderMember(data.familyTree)}
           </li>
@@ -495,34 +528,20 @@
         btn.addEventListener('click', (event) => {
           event.stopPropagation();
           const id = btn.dataset.id;
+          const target = btn.closest('.tree-node');
+          if (!target) return;
+
           if (collapsed.has(id)) {
             collapsed.delete(id);
             btn.textContent = '-';
+            target.classList.remove('collapsed');
           } else {
             collapsed.add(id);
             btn.textContent = '+';
-          }
-
-          const parentNode = btn.closest('.tree-node');
-          if (parentNode) {
-            parentNode.classList.toggle('collapsed');
+            target.classList.add('collapsed');
           }
         });
       });
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function openModal() {
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
