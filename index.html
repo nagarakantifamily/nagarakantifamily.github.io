@@ -9,13 +9,10 @@
   <style>
     :root {
       --bg: #030014;
-      --panel: rgba(15, 23, 42, 0.42);
-      --panel-border: rgba(148, 163, 184, 0.18);
       --line: rgba(148, 163, 184, 0.72);
       --text: #f8fafc;
       --muted: #94a3b8;
       --cyan: #67e8f9;
-      --cyan-strong: #22d3ee;
     }
 
     * { box-sizing: border-box; }
@@ -137,7 +134,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 26px 16px 0;
+      padding: 0 16px;
     }
 
     .tree li::before,
@@ -158,6 +155,23 @@
     .tree li:last-child::after { display: none; }
     .tree li:only-child::before,
     .tree li:only-child::after { display: none; }
+
+    .tree ul ul {
+      padding-top: 30px;
+      position: relative;
+    }
+
+    .tree ul ul::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 30px;
+      background: var(--line);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
 
     .family-unit {
       position: relative;
@@ -254,13 +268,13 @@
       transform: translate(-50%, -50%);
     }
 
-    .couple-connector.has-children::after {
+    .couple-connector::after {
       content: "";
       position: absolute;
       left: 50%;
       bottom: 0;
       width: 2px;
-      height: 42px;
+      height: 46px;
       background: var(--line);
       transform: translateX(-50%);
     }
@@ -529,7 +543,7 @@
       const isOpen = !collapsed.has(person.name);
 
       return `
-        <div class="couple-connector ${hasChildren ? 'has-children' : ''}">
+        <div class="couple-connector">
           ${hasChildren ? `<button class="toggle-btn" type="button" data-name="${escapeHtml(person.name)}">${isOpen ? '-' : '+'}</button>` : ''}
         </div>
       `;
@@ -537,9 +551,10 @@
 
     function renderPerson(person) {
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
+      const nodeClass = hasChildren && collapsed.has(person.name) ? 'collapsed' : '';
 
       const base = `
-        <li class="${hasChildren && collapsed.has(person.name) ? 'collapsed' : ''}">
+        <li class="${nodeClass}">
           <div class="family-unit">
             ${cardMarkup(person)}
             ${person.spouse ? coupleConnectorMarkup(person) : ''}
