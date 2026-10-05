@@ -124,17 +124,15 @@
       justify-content: center;
       align-items: flex-start;
       position: relative;
-      padding-top: 30px;
+      padding-top: 0;
     }
-
-    .tree > ul { padding-top: 0; }
 
     .tree li {
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0 16px;
+      padding: 30px 18px 0;
     }
 
     .tree li::before,
@@ -148,37 +146,29 @@
       z-index: 0;
     }
 
-    .tree li::before { left: 0; }
-    .tree li::after { right: 0; }
+    .tree li::before { right: 50%; }
+    .tree li::after { left: 50%; }
 
     .tree li:first-child::before,
     .tree li:last-child::after { display: none; }
     .tree li:only-child::before,
     .tree li:only-child::after { display: none; }
 
-    .tree ul ul {
-      padding-top: 30px;
-      position: relative;
+    .tree > ul > li {
+      padding-top: 0;
     }
 
-    .tree ul ul::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 2px;
-      height: 30px;
-      background: var(--line);
-      transform: translateX(-50%);
-      z-index: 0;
+    .tree > ul > li::before,
+    .tree > ul > li::after {
+      display: none;
     }
 
     .family-unit {
       position: relative;
-      z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 2;
       min-height: 110px;
     }
 
@@ -186,7 +176,7 @@
       content: "";
       position: absolute;
       left: 50%;
-      top: -30px;
+      top: 100%;
       width: 2px;
       height: 30px;
       background: var(--line);
@@ -196,6 +186,29 @@
 
     .tree > ul > li > .family-unit::before {
       display: none;
+    }
+
+    .children {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      padding-top: 30px;
+    }
+
+    .children::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 30px;
+      background: var(--line);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+
+    .collapsed > .children {
+      display: none !important;
     }
 
     .person-card {
@@ -274,7 +287,7 @@
       left: 50%;
       bottom: 0;
       width: 2px;
-      height: 46px;
+      height: 28px;
       background: var(--line);
       transform: translateX(-50%);
     }
@@ -295,33 +308,12 @@
       justify-content: center;
       cursor: pointer;
       transition: background 0.2s ease, transform 0.2s ease;
+      padding: 0;
     }
 
     .toggle-btn:hover {
       background: rgba(103,232,249,0.08);
       transform: scale(1.04);
-    }
-
-    .children {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      padding-top: 30px;
-    }
-
-    .children::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: 2px;
-      height: 30px;
-      background: var(--line);
-      transform: translateX(-50%);
-    }
-
-    .collapsed > .children {
-      display: none !important;
     }
 
     .modal {
@@ -427,10 +419,7 @@
     const familyData = {
       name: "N P Rangiah Shetty",
       role: "Patriarch",
-      spouse: {
-        name: "N Varalakshamma",
-        role: "Matriarch"
-      },
+      spouse: { name: "N Varalakshamma", role: "Matriarch" },
       description: "Patriarch of the Nagarakanti family.",
       children: [
         {
@@ -541,7 +530,6 @@
     function coupleConnectorMarkup(person) {
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
       const isOpen = !collapsed.has(person.name);
-
       return `
         <div class="couple-connector">
           ${hasChildren ? `<button class="toggle-btn" type="button" data-name="${escapeHtml(person.name)}">${isOpen ? '-' : '+'}</button>` : ''}
@@ -553,7 +541,7 @@
       const hasChildren = Array.isArray(person.children) && person.children.length > 0;
       const nodeClass = hasChildren && collapsed.has(person.name) ? 'collapsed' : '';
 
-      const base = `
+      return `
         <li class="${nodeClass}">
           <div class="family-unit">
             ${cardMarkup(person)}
@@ -567,8 +555,6 @@
           ` : ''}
         </li>
       `;
-
-      return base;
     }
 
     function renderTree() {
